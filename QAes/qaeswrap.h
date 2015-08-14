@@ -28,24 +28,24 @@ public:
 public:
     QAesWrap(const QByteArray & passwprd,const QByteArray & salt,AesBit bit);
 
-    bool encrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad = PKCS7);
-    bool decrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad = PKCS7);
+    bool encrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad = PKCS7) const;
+    bool decrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad = PKCS7) const;
 
-    inline QByteArray encrypt(const QByteArray & data,AesMode mode,PaddingMode pad = PKCS7){
+    inline QByteArray encrypt(const QByteArray & data,AesMode mode,PaddingMode pad = PKCS7) const {
           QByteArray out;
           encrypt(data,out,mode,pad);
           return out;
     }
 
-    inline QByteArray decrypt(const QByteArray & data,AesMode mode,PaddingMode pad = PKCS7){
+    inline QByteArray decrypt(const QByteArray & data,AesMode mode,PaddingMode pad = PKCS7) const {
           QByteArray out;
           decrypt(data,out,mode,pad);
           return out;
     }
 private:
-    void ecbencrypt(const BYTE *in, size_t size, BYTE *blcok, QByteArray & out);
-    void ecbdecrypt(const BYTE *in, size_t size, QByteArray & out);
-    void initPadding(const QByteArray & in,QByteArray & out,AesMode mode,PaddingMode pad);
+    void ecbencrypt(const BYTE *in, size_t size, BYTE *blcok, QByteArray & out) const;
+    void ecbdecrypt(const BYTE *in, size_t size, QByteArray & out) const;
+    void initPadding(const QByteArray & in,QByteArray & out,AesMode mode,PaddingMode pad) const;
 private:
     AesBit mbit;
     WORD mpass[60];

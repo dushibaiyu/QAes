@@ -255,7 +255,7 @@ void aes_encrypt_cbc(const BYTE in[], size_t in_len,const BYTE * lastBlock, BYTE
         memcpy(iv_buf, buf_out, AES_BLOCK_SIZE);
     }
 
-	return(TRUE);
+    return;
 }
 
 void aes_decrypt_cbc(const BYTE in[], size_t in_len, BYTE out[], const WORD key[], int keysize, const BYTE iv[])
@@ -276,7 +276,7 @@ void aes_decrypt_cbc(const BYTE in[], size_t in_len, BYTE out[], const WORD key[
 	}
 
 
-	return(TRUE);
+    return;
 }
 
 int aes_encrypt_cbc_mac(const BYTE in[], size_t in_len, BYTE out[], const WORD key[], int keysize, const BYTE iv[])

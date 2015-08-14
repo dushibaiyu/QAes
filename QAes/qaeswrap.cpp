@@ -9,7 +9,7 @@ QAesWrap::QAesWrap(const QByteArray & passwprd,const QByteArray & salt,AesBit bi
     memcpy(msalt,data.data(),AES_BLOCK_SIZE);
 }
 
-bool QAesWrap::encrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad)
+bool QAesWrap::encrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad) const
 {
     out.clear();
     switch (mode) {
@@ -27,7 +27,7 @@ bool QAesWrap::encrypt(const QByteArray & in, QByteArray & out, AesMode mode,Pad
     return true;
 }
 
-void QAesWrap::initPadding(const QByteArray & in,QByteArray & out,AesMode mode,PaddingMode pad)
+void QAesWrap::initPadding(const QByteArray & in,QByteArray & out,AesMode mode,PaddingMode pad) const
 {
     int size = in.size();
     int last = size % AES_BLOCK_SIZE;
@@ -86,7 +86,7 @@ void QAesWrap::initPadding(const QByteArray & in,QByteArray & out,AesMode mode,P
     }
 }
 
-void QAesWrap::ecbencrypt(const BYTE * in, size_t size, BYTE *blcok, QByteArray & out)
+void QAesWrap::ecbencrypt(const BYTE * in, size_t size, BYTE *blcok, QByteArray & out) const
 {
     BYTE buf_in[AES_BLOCK_SIZE] = {0}, buf_out[AES_BLOCK_SIZE] = {0};
     int blocks, idx;
@@ -106,7 +106,7 @@ void QAesWrap::ecbencrypt(const BYTE * in, size_t size, BYTE *blcok, QByteArray 
     }
 }
 
-void QAesWrap::ecbdecrypt(const BYTE *in, size_t size, QByteArray & out)
+void QAesWrap::ecbdecrypt(const BYTE *in, size_t size, QByteArray & out) const
 {
     BYTE buf_in[AES_BLOCK_SIZE] = {0}, buf_out[AES_BLOCK_SIZE] = {0};
     int blocks, idx;
@@ -121,7 +121,7 @@ void QAesWrap::ecbdecrypt(const BYTE *in, size_t size, QByteArray & out)
     }
 }
 
-bool QAesWrap::decrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad)
+bool QAesWrap::decrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad) const
 {
     out.clear();
     int size = in.size();
