@@ -11,6 +11,7 @@ QAesWrap::QAesWrap(const QByteArray & passwprd,const QByteArray & salt,AesBit bi
 
 bool QAesWrap::encrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad) const
 {
+    if (in.isEmpty()) return false;
     out.clear();
     switch (mode) {
     case AES_CTR:
@@ -123,6 +124,7 @@ void QAesWrap::ecbdecrypt(const BYTE *in, size_t size, QByteArray & out) const
 
 bool QAesWrap::decrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad) const
 {
+    if (in.isEmpty()) return false;
     out.clear();
     int size = in.size();
     out.resize(size);
