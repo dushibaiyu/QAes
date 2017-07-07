@@ -25,7 +25,7 @@ public:
         ANSIX923,
         PKCS7
     };
-public:
+public slots:
     QAesWrap(const QByteArray & passwprd,const QByteArray & salt,AesBit bit);
 
     bool encrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad = PKCS7) const;
