@@ -231,7 +231,7 @@ void xor_buf(const BYTE in[], BYTE out[], size_t len)
 /*******************
 * AES - CBC
 *******************/
-void aes_encrypt_cbc(const BYTE in[], size_t in_len,const BYTE * lastBlock, BYTE out[], const WORD key[], int keysize, const BYTE iv[])
+void aes_encrypt_cbc(const BYTE in[], size_t in_len,const BYTE * lastBlock, BYTE out[], const WORD32 key[], int keysize, const BYTE iv[])
 {
 	BYTE buf_in[AES_BLOCK_SIZE], buf_out[AES_BLOCK_SIZE], iv_buf[AES_BLOCK_SIZE];
 	int blocks, idx;
@@ -258,7 +258,7 @@ void aes_encrypt_cbc(const BYTE in[], size_t in_len,const BYTE * lastBlock, BYTE
     return;
 }
 
-void aes_decrypt_cbc(const BYTE in[], size_t in_len, BYTE out[], const WORD key[], int keysize, const BYTE iv[])
+void aes_decrypt_cbc(const BYTE in[], size_t in_len, BYTE out[], const WORD32 key[], int keysize, const BYTE iv[])
 {
 	BYTE buf_in[AES_BLOCK_SIZE], buf_out[AES_BLOCK_SIZE], iv_buf[AES_BLOCK_SIZE];
 	int blocks, idx;
@@ -279,7 +279,7 @@ void aes_decrypt_cbc(const BYTE in[], size_t in_len, BYTE out[], const WORD key[
     return;
 }
 
-int aes_encrypt_cbc_mac(const BYTE in[], size_t in_len, BYTE out[], const WORD key[], int keysize, const BYTE iv[])
+int aes_encrypt_cbc_mac(const BYTE in[], size_t in_len, BYTE out[], const WORD32 key[], int keysize, const BYTE iv[])
 {
     BYTE buf_in[AES_BLOCK_SIZE], buf_out[AES_BLOCK_SIZE], iv_buf[AES_BLOCK_SIZE];
     int blocks, idx;
@@ -322,7 +322,7 @@ void increment_iv(BYTE iv[], int counter_size)
 
 // Performs the encryption in-place, the input and output buffers may be the same.
 // Input may be an arbitrary length (in bytes).
-void aes_encrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD key[], int keysize, const BYTE iv[])
+void aes_encrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD32 key[], int keysize, const BYTE iv[])
 {
 	size_t idx = 0, last_block_length;
 	BYTE iv_buf[AES_BLOCK_SIZE], out_buf[AES_BLOCK_SIZE];
@@ -345,7 +345,7 @@ void aes_encrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD key[
 	xor_buf(out_buf, &out[idx], in_len - idx);   // Use the Most Significant bytes.
 }
 
-void aes_decrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD key[], int keysize, const BYTE iv[])
+void aes_decrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD32 key[], int keysize, const BYTE iv[])
 {
 	// CTR encryption is its own inverse function.
 	aes_encrypt_ctr(in, in_len, out, key, keysize, iv);
@@ -355,13 +355,13 @@ void aes_decrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD key[
 * AES - CCM
 *******************/
 // out_len = payload_len + assoc_len
-int aes_encrypt_ccm(const BYTE payload[], WORD payload_len, const BYTE assoc[], unsigned short assoc_len,
-                    const BYTE nonce[], unsigned short nonce_len, BYTE out[], WORD *out_len,
-                    WORD mac_len, const BYTE key_str[], int keysize)
+int aes_encrypt_ccm(const BYTE payload[], WORD32 payload_len, const BYTE assoc[], unsigned short assoc_len,
+                    const BYTE nonce[], unsigned short nonce_len, BYTE out[], WORD32 *out_len,
+                    WORD32 mac_len, const BYTE key_str[], int keysize)
 {
 	BYTE temp_iv[AES_BLOCK_SIZE], counter[AES_BLOCK_SIZE], mac[16], *buf;
 	int end_of_buf, payload_len_store_size;
-	WORD key[60];
+	WORD32 key[60];
 
 	if (mac_len != 4 && mac_len != 6 && mac_len != 8 && mac_len != 10 &&
 	   mac_len != 12 && mac_len != 14 && mac_len != 16)
@@ -418,13 +418,13 @@ int aes_encrypt_ccm(const BYTE payload[], WORD payload_len, const BYTE assoc[], 
 
 // plaintext_len = ciphertext_len - mac_len
 // Needs a flag for whether the MAC matches.
-int aes_decrypt_ccm(const BYTE ciphertext[], WORD ciphertext_len, const BYTE assoc[], unsigned short assoc_len,
-                    const BYTE nonce[], unsigned short nonce_len, BYTE plaintext[], WORD *plaintext_len,
-                    WORD mac_len, int *mac_auth, const BYTE key_str[], int keysize)
+int aes_decrypt_ccm(const BYTE ciphertext[], WORD32 ciphertext_len, const BYTE assoc[], unsigned short assoc_len,
+                    const BYTE nonce[], unsigned short nonce_len, BYTE plaintext[], WORD32 *plaintext_len,
+                    WORD32 mac_len, int *mac_auth, const BYTE key_str[], int keysize)
 {
 	BYTE temp_iv[AES_BLOCK_SIZE], counter[AES_BLOCK_SIZE], mac[16], mac_buf[16], *buf;
 	int end_of_buf, plaintext_len_store_size;
-	WORD key[60];
+	WORD32 key[60];
 
 	if (ciphertext_len <= mac_len)
 		return(FALSE);
@@ -541,7 +541,7 @@ void ccm_format_payload_data(BYTE buf[], int *end_of_buf, const BYTE payload[], 
 /////////////////
 
 // Substitutes a word using the AES S-Box.
-WORD SubWord(WORD word)
+WORD32 SubWord(WORD32 word)
 {
 	unsigned int result;
 
@@ -555,10 +555,10 @@ WORD SubWord(WORD word)
 // Performs the action of generating the keys that will be used in every round of
 // encryption. "key" is the user-supplied input key, "w" is the output key schedule,
 // "keysize" is the length in bits of "key", must be 128, 192, or 256.
-void aes_key_setup(const BYTE key[], WORD w[], int keysize)
+void aes_key_setup(const BYTE key[], WORD32 w[], int keysize)
 {
 	int Nb=4,Nr,Nk,idx;
-	WORD temp,Rcon[]={0x01000000,0x02000000,0x04000000,0x08000000,0x10000000,0x20000000,
+	WORD32 temp,Rcon[]={0x01000000,0x02000000,0x04000000,0x08000000,0x10000000,0x20000000,
 	                  0x40000000,0x80000000,0x1b000000,0x36000000,0x6c000000,0xd8000000,
 	                  0xab000000,0x4d000000,0x9a000000};
 
@@ -592,7 +592,7 @@ void aes_key_setup(const BYTE key[], WORD w[], int keysize)
 // form of 4 integers (the "w" array). Each integer is XOR'd by one column of the state.
 // Also performs the job of InvAddRoundKey(); since the function is a simple XOR process,
 // it is its own inverse.
-void AddRoundKey(BYTE state[][4], const WORD w[])
+void AddRoundKey(BYTE state[][4], const WORD32 w[])
 {
 	BYTE subkey[4];
 
@@ -929,7 +929,7 @@ void InvMixColumns(BYTE state[][4])
 // (En/De)Crypt
 /////////////////
 
-void aes_encrypt(const BYTE in[], BYTE out[], const WORD key[], int keysize)
+void aes_encrypt(const BYTE in[], BYTE out[], const WORD32 key[], int keysize)
 {
 	BYTE state[4][4];
 
@@ -1002,7 +1002,7 @@ void aes_encrypt(const BYTE in[], BYTE out[], const WORD key[], int keysize)
 	out[15] = state[3][3];
 }
 
-void aes_decrypt(const BYTE in[], BYTE out[], const WORD key[], int keysize)
+void aes_decrypt(const BYTE in[], BYTE out[], const WORD32 key[], int keysize)
 {
 	BYTE state[4][4];
 
@@ -1087,7 +1087,7 @@ void print_state(BYTE state[][4])
 }
 
 // This prints the key (4 consecutive ints) used for a given round as a linear hex string.
-void print_rnd_key(WORD key[])
+void print_rnd_key(WORD32 key[])
 {
 	int idx;
 
