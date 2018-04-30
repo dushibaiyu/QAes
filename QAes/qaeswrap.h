@@ -48,7 +48,7 @@ private:
     void initPadding(const QByteArray & in,QByteArray & out,AesMode mode,PaddingMode pad) const;
 private:
     AesBit mbit;
-    WORD mpass[60];
+    WORD32 mpass[60];
     BYTE msalt[AES_BLOCK_SIZE];
 };
 
